@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import { AI } from "./examples/generate-ui-streamui/action";
+import { AI } from "@/app/post/action";
 import { BackButton } from "@/components/back-button";
 
 const inter = Inter({ subsets: ["latin"] });

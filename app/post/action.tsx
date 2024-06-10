@@ -5,8 +5,8 @@ import { openai } from "@ai-sdk/openai";
 import { ReactNode } from "react";
 import { z } from "zod";
 import { nanoid } from "nanoid";
-import { JokeComponent } from "./joke-component";
-import { generateObject } from "ai";
+import { PostComponent } from "./post-component";
+import {DeepPartial, generateObject} from "ai";
 import { jokeSchema } from "./joke";
 
 export interface ServerMessage {
@@ -19,6 +19,16 @@ export interface ClientMessage {
   role: "user" | "assistant";
   display: ReactNode;
 }
+const postSchema = z.object({
+  post: z.object({
+    tittle: z.string().describe("tittle of instagram post"),
+    content: z.string().describe("content part of instagram post"),
+    callToAction: z.string().describe("text that encourages user to take action and by content"),
+    tags: z.array(z.string()).describe("tags for instagram post"),
+  })
+});
+
+export type Post = DeepPartial<typeof postSchema>;
 
 export async function continueConversation(
   input: string,
@@ -42,20 +52,20 @@ export async function continueConversation(
     },
     tools: {
       tellAJoke: {
-        description: "Tell a joke",
+        description: "create a Post for Instagram",
         parameters: z.object({
-          location: z.string().describe("the users location"),
+          product: z.string().describe("the product to create a post for"),
+          price: z.number().describe("the price of the product"),
         }),
-        generate: async function* ({ location }) {
+        generate: async function* ({ product, price }) {
           yield <div>loading...</div>;
           const joke = await generateObject({
             model: openai("gpt-4o"),
-            schema: jokeSchema,
+            schema: postSchema,
             prompt:
-              "Generate a joke that incorporates the following location:" +
-              location,
+              `Create a post for Instagram with belowed structure for this product: ${product} with price: ${price}`,
           });
-          return <JokeComponent joke={joke.object} />;
+          return <PostComponent post={joke.object} />;
         },
       },
     },

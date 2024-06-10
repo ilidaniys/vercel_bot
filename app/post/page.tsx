@@ -4,6 +4,8 @@ import { useState } from "react";
 import { ClientMessage } from "./action";
 import { useActions, useUIState } from "ai/rsc";
 import { nanoid } from "nanoid";
+import {Input} from "@/components/ui/input";
+import {Button} from "@/components/ui/button";
 
 export default function Home() {
   const [input, setInput] = useState<string>("");
@@ -11,7 +13,7 @@ export default function Home() {
   const { continueConversation } = useActions();
 
   return (
-    <div>
+    <div className={"flex flex-col items-center min-w-[50rem]"}>
       <div>
         {conversation.map((message: ClientMessage) => (
           <div key={message.id}>
@@ -21,6 +23,7 @@ export default function Home() {
       </div>
 
       <form
+          className={"flex gap-5 w-full"}
         onSubmit={async (e) => {
           e.preventDefault();
           setInput("");
@@ -37,14 +40,14 @@ export default function Home() {
           ]);
         }}
       >
-        <input
+        <Input
           type="text"
           value={input}
           onChange={(event) => {
             setInput(event.target.value);
           }}
         />
-        <button>Send Message</button>
+        <Button>Send Message</Button>
       </form>
     </div>
   );
